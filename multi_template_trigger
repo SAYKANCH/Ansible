@@ -1,0 +1,101 @@
+---
+- name: AWS Template Job Trigger Playbook with Tower
+  hosts: localhost
+  gather_facts: no
+ 
+  vars_files:
+    - properties.yml  # This file holds the template IDs and details
+ 
+  vars:
+    windows_version: "windows-w2k12"  # Change this value based on the version needed
+    results: []  # To store results of each template run
+ 
+  tasks:
+    - block:
+        # Launch Job for Template 1 (temp1)
+        - name: Launch Job for Template 1 (temp1)
+          awx.awx.job_launch:
+            job_template: "{{ aTemplateIds2['windows-is-alive'] }}"
+          register: job_temp1
+ 
+        # Wait for Template 1 (temp1) to finish
+        - name: Wait for Template 1 (temp1) to finish
+          awx.awx.tower_job_wait:
+            job_id: "{{ job_temp1.id }}"
+            timeout: 120
+          register: result_temp1
+ 
+        # Collect result of Template 1 (temp1)
+        - name: Collect result of Template 1 (temp1)
+          set_fact:
+            results: "{{ results + [ { 'template': 'Template 1', 'status': result_temp1.status, 'result': result_temp1 } ] }}"
+ 
+        # Fail playbook if Template 1 fails
+        - name: Fail if Template 1 (temp1) fails
+          fail:
+            msg: "Template 1 (windows-is-alive) failed with result: {{ result_temp1 }}"
+          when: result_temp1.status != 'successful'
+ 
+    - block:
+        # Launch Job for Template 2 (temp2)
+        - name: Launch Job for Template 2 (temp2)
+          awx.awx.job_launch:
+            job_template: "{{ aTemplateIds1['vmware-vro-status'] }}"
+          register: job_temp2
+ 
+        # Wait for Template 2 (temp2) to finish
+        - name: Wait for Template 2 (temp2) to finish
+          awx.awx.tower_job_wait:
+            job_id: "{{ job_temp2.id }}"
+            timeout: 120
+          register: result_temp2
+ 
+        # Collect result of Template 2 (temp2)
+        - name: Collect result of Template 2 (temp2)
+          set_fact:
+            results: "{{ results + [ { 'template': 'Template 2', 'status': result_temp2.status, 'result': result_temp2 } ] }}"
+ 
+        # Fail playbook if Template 2 fails
+        - name: Fail if Template 2 (temp2) fails
+          fail:
+            msg: "Template 2 (vmware-vro-status) failed with result: {{ result_temp2 }}"
+          when: result_temp2.status != 'successful'
+ 
+    - block:
+        # Launch Job for Template 3 (temp3) - Windows specific version
+        - name: Launch Job for Template 3 (temp3)
+          awx.awx.job_launch:
+            job_template: "{{ aTemplateIds3[windows_version] }}"
+          register: job_temp3
+ 
+        # Wait for Template 3 (temp3) to finish
+        - name: Wait for Template 3 (temp3) to finish
+          awx.awx.tower_job_wait:
+            job_id: "{{ job_temp3.id }}"
+            timeout: 120
+          register: result_temp3
+ 
+        # Collect result of Template 3 (temp3)
+        - name: Collect result of Template 3 (temp3)
+          set_fact:
+            results: "{{ results + [ { 'template': 'Template 3', 'status': result_temp3.status, 'result': result_temp3 } ] }}"
+ 
+        # Fail playbook if Template 3 fails
+        - name: Fail if Template 3 (temp3) fails
+          fail:
+            msg: "Template 3 ({{ windows_version }}) failed with result: {{ result_temp3 }}"
+          when: result_temp3.status != 'successful'
+ 
+    - name: Print combined results if all templates succeed
+      ansible.builtin.debug:
+        var: results
+ 
+    - name: Output success message if all templates succeed
+      ansible.builtin.debug:
+        msg: "All templates were successfully executed."
+ 
+  rescue:
+    # Handle errors and provide feedback, print the combined results of the templates that ran
+    - name: Handle errors and print combined results of failed and successful templates
+      ansible.builtin.debug:
+        var: results
