@@ -1,6 +1,8 @@
-aTemplateIds2:
-  - name: "windows-is-alive"
-    id: 935
-    extra_vars: '{"HOSTS":"cmdb_ci.fqdn"}'
+
+templates: { 
+first :{name: "windows-is-alive"
+id: 935
+extra_vars: '{"HOSTS":"cmdb_ci.fqdn"}'}
+}
 
  
