@@ -15,7 +15,7 @@
         # Launch Job for Template 1 (temp1)
         - name: Launch Job for Template 1 (temp1)
           awx.awx.job_launch:
-            job_template: "{{ aTemplateIds2['windows-is-alive'] }}"
+            job_template: "{{ templates.first.name }}"
           register: job_temp1
  
         # Wait for Template 1 (temp1) to finish
@@ -28,12 +28,12 @@
         # Collect result of Template 1 (temp1)
         - name: Collect result of Template 1 (temp1)
           set_fact:
-            results: "{{ results + [ { 'template': 'Template 1', 'status': result_temp1.status, 'result': result_temp1 } ] }}"
+            results: "{{ results + [ { 'template':  '{{ templates.first.name }}', 'status': result_temp1.status, 'result': result_temp1 } ] }}"
  
         # Fail playbook if Template 1 fails
         - name: Fail if Template 1 (temp1) fails
           fail:
-            msg: "Template 1 (windows-is-alive) failed with result: {{ result_temp1 }}"
+            msg: "Template  '{{ templates.first.name }}' failed with result: {{ result_temp1 }}"
           when: result_temp1.status != 'successful'
  
     
