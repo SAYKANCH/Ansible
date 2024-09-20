@@ -3,10 +3,4 @@ templates:
     id: 935
     extra_vars: '{"HOSTS":"cmdb_ci.fqdn"}'
 
-  - name: "vmware-vro-status"
-    id: 3193
-    extra_vars: '{"vmHOSTS":"cmdb_ci.fqdn","EXTRA_CRED":"extra_credentials_vro"}'
-
-  - name: "windows-w2k12"
-    id: 5965
-    extra_vars: '{"windows-w2k12":{"HOSTS":"cmdb_ci.fqdn","EXTRA_CRED":"extra_credentials_pre"},"windows-w2k8":{"HOSTS":"cmdb_ci.fqdn","EXTRA_CRED":"extra_credentials_pre"},"windows-2012":{"HOSTS":"cmdb_ci.fqdn","EXTRA_CRED":"extra_credentials_pre"},"windows-2008":{"HOSTS":"cmdb_ci.fqdn","EXTRA_CRED":"extra_credentials_pre"},"windows-w2k16":{"HOSTS":"cmdb_ci.fqdn","EXTRA_CRED":"extra_credentials_pre"},"windows-2016":{"HOSTS":"cmdb_ci.fqdn","EXTRA_CRED":"extra_credentials_pre"}}'   
+ 
