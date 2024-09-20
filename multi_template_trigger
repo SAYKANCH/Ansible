@@ -36,56 +36,7 @@
             msg: "Template 1 (windows-is-alive) failed with result: {{ result_temp1 }}"
           when: result_temp1.status != 'successful'
  
-    - block:
-        # Launch Job for Template 2 (temp2)
-        - name: Launch Job for Template 2 (temp2)
-          awx.awx.job_launch:
-            job_template: "{{ aTemplateIds1['vmware-vro-status'] }}"
-          register: job_temp2
- 
-        # Wait for Template 2 (temp2) to finish
-        - name: Wait for Template 2 (temp2) to finish
-          awx.awx.tower_job_wait:
-            job_id: "{{ job_temp2.id }}"
-            timeout: 120
-          register: result_temp2
- 
-        # Collect result of Template 2 (temp2)
-        - name: Collect result of Template 2 (temp2)
-          set_fact:
-            results: "{{ results + [ { 'template': 'Template 2', 'status': result_temp2.status, 'result': result_temp2 } ] }}"
- 
-        # Fail playbook if Template 2 fails
-        - name: Fail if Template 2 (temp2) fails
-          fail:
-            msg: "Template 2 (vmware-vro-status) failed with result: {{ result_temp2 }}"
-          when: result_temp2.status != 'successful'
- 
-    - block:
-        # Launch Job for Template 3 (temp3) - Windows specific version
-        - name: Launch Job for Template 3 (temp3)
-          awx.awx.job_launch:
-            job_template: "{{ aTemplateIds3[windows_version] }}"
-          register: job_temp3
- 
-        # Wait for Template 3 (temp3) to finish
-        - name: Wait for Template 3 (temp3) to finish
-          awx.awx.tower_job_wait:
-            job_id: "{{ job_temp3.id }}"
-            timeout: 120
-          register: result_temp3
- 
-        # Collect result of Template 3 (temp3)
-        - name: Collect result of Template 3 (temp3)
-          set_fact:
-            results: "{{ results + [ { 'template': 'Template 3', 'status': result_temp3.status, 'result': result_temp3 } ] }}"
- 
-        # Fail playbook if Template 3 fails
-        - name: Fail if Template 3 (temp3) fails
-          fail:
-            msg: "Template 3 ({{ windows_version }}) failed with result: {{ result_temp3 }}"
-          when: result_temp3.status != 'successful'
- 
+    
     - name: Print combined results if all templates succeed
       ansible.builtin.debug:
         var: results
